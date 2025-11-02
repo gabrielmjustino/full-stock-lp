@@ -751,6 +751,142 @@ footer {
     color: #adb5bd; /* Cinza claro */
     font-size: 0.9rem;
 }
+/* ===== CARROSSEL CORRIGIDO ===== */
+.carousel-container {
+    width: 100%;
+    max-width: 1200px;
+    overflow: hidden;
+    position: relative;
+    margin: 50px auto;
+}
+
+.carousel-track {
+    display: flex;
+    animation: scroll 20s linear infinite;
+    align-items: center;
+    height: 200px;
+}
+
+.carousel-slide {
+    flex-shrink: 0;
+    margin: 0 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+}
+
+.carousel-slide img {
+    max-width: 300px;
+    max-height: 160px;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* Efeito de fade nas bordas */
+.carousel-container::before,
+.carousel-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.carousel-container::before {
+    left: 0;
+    background: linear-gradient(to right, #000000, transparent);
+}
+
+.carousel-container::after {
+    right: 0;
+    background: linear-gradient(to left, #000000, transparent);
+}
+
+/* ANIMAÇÃO SUAVE - sem pulo na transição */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-300px * 7 - 15px * 14));
+    }
+}
+
+/* Adiciona uma transição mais suave no reset */
+.carousel-track {
+    animation-timing-function: linear;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .carousel-track {
+        height: 160px;
+    }
+    
+    .carousel-slide img {
+        max-width: 250px;
+        max-height: 120px;
+    }
+    
+    .carousel-slide {
+        margin: 0 12px;
+        padding: 15px;
+    }
+    
+    .carousel-container::before,
+    .carousel-container::after {
+        width: 150px;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc(-250px * 7 - 12px * 14));
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-track {
+        height: 130px;
+    }
+    
+    .carousel-slide img {
+        max-width: 200px;
+        max-height: 100px;
+    }
+
+    .carousel-slide {
+        margin: 0 10px;
+        padding: 10px;
+    }
+
+    .carousel-container::before,
+    .carousel-container::after {
+        width: 100px;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(calc(-200px * 7 - 10px * 14));
+        }
+    }
+}
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 992px) {
