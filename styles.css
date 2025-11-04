@@ -813,7 +813,7 @@ footer {
     padding: 30px 0;
   }
   .logos-slide {
-    animation: scroll 45s linear infinite;
+    animation: scroll 3s linear infinite;
   }
   .logos-slide img {
     height: 60px;
