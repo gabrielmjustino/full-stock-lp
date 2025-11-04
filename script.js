@@ -69,38 +69,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Carrossel infinito suave
-function initSmoothCarousel() {
-    const carouselTrack = document.querySelector('.carousel-track');
-    if (!carouselTrack) return;
-    
-    let animationId;
-    let position = 0;
-    const speed = 1; // pixels por frame (ajuste conforme necessidade)
-    
-    function animate() {
-        position -= speed;
-        
-        // Quando chegar no final do primeiro conjunto, reseta suavemente
-        const slideWidth = 300 + 30; // largura + margem
-        const totalWidth = slideWidth * 7; // 7 imagens
-        
-        if (Math.abs(position) >= totalWidth) {
-            position = 0;
-        }
-        
-        carouselTrack.style.transform = `translateX(${position}px)`;
-        animationId = requestAnimationFrame(animate);
-    }
-    
-    // Inicia a animação
-    animate();
-    
-    // Limpa a animação quando a página for fechada
-    window.addEventListener('beforeunload', () => {
-        cancelAnimationFrame(animationId);
-    });
-}
-
-// Inicializa quando a página carrega
-document.addEventListener('DOMContentLoaded', initSmoothCarousel);
