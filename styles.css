@@ -386,7 +386,7 @@ nav ul.show {
     transform: translateX(-50%);
     width: 90%;
     max-width: 300px;
-    background: rgb(180, 180, 180);
+    background: rgb(26, 26, 26);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     padding: 20px 0;
