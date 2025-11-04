@@ -764,7 +764,7 @@ footer {
 
 .logos-slide {
   display: flex;
-  animation: scroll 30s linear infinite;
+  animation: scroll 5s linear infinite;
   will-change: transform;
 }
 
@@ -799,7 +799,7 @@ footer {
     padding: 40px 0;
   }
   .logos-slide {
-    animation: scroll 10s linear infinite; /* mais suave */
+    animation: scroll 5s linear infinite; /* mais suave */
   }
   .logos-slide img {
     height: 80px;
@@ -813,7 +813,7 @@ footer {
     padding: 30px 0;
   }
   .logos-slide {
-    animation: scroll 10s linear infinite;
+    animation: scroll 5s linear infinite;
   }
   .logos-slide img {
     height: 60px;
