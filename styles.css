@@ -799,7 +799,7 @@ footer {
     padding: 40px 0;
   }
   .logos-slide {
-    animation: scroll 3s linear infinite; /* mais suave */
+    animation: scroll 7s linear infinite; /* mais suave */
   }
   .logos-slide img {
     height: 80px;
@@ -813,7 +813,7 @@ footer {
     padding: 30px 0;
   }
   .logos-slide {
-    animation: scroll 3s linear infinite;
+    animation: scroll 7s linear infinite;
   }
   .logos-slide img {
     height: 60px;
@@ -827,8 +827,8 @@ footer {
     color:white;
 }
 
-.quetemos{
-   display: none;
+.texto-h2 span {
+    display: inline;
 }
 
 
@@ -878,3 +878,8 @@ footer {
         margin-left: 0;
     }
 }
+
+@media (max-width: 600px) {
+  .texto-h2 span {
+    display: block; /* no mobile o span vira bloco e quebra linha */
+  }
