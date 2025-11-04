@@ -880,6 +880,7 @@ footer {
 }
 
 @media (max-width: 600px) {
-  .texto-h2 span {
+    .texto-h2 span {
     display: block; /* no mobile o span vira bloco e quebra linha */
   }
+}
