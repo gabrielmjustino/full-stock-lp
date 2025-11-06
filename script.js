@@ -68,66 +68,159 @@
     });
   });
 
-  // ---------- CARROSSEL (aguarda carregamento completo) ----------
-window.addEventListener('load', () => {
-  const slide = document.querySelector('.logos-slide');
-  if (!slide) return;
+  // ---------- CARROSSEL ROBUSTO COM RESET AUTOMÁTICO ----------
+  window.addEventListener('load', () => {
+    const slide = document.querySelector('.logos-slide');
+    if (!slide) return;
 
-  // evita rodar múltiplas vezes
-  if (slide.dataset.carouselInit === 'true') return;
-  slide.dataset.carouselInit = 'true';
+    // Evita rodar múltiplas vezes
+    if (slide.dataset.carouselInit === 'true') return;
+    slide.dataset.carouselInit = 'true';
 
-  // guarda os filhos originais
-  const originals = Array.from(slide.children);
-  if (originals.length === 0) return;
+    const originals = Array.from(slide.children);
+    if (originals.length === 0) return;
 
-  // LIMPA quaisquer clones existentes
-  const existingClones = slide.querySelectorAll('[data-clone="true"]');
-  existingClones.forEach(clone => clone.remove());
+    // Remove clones existentes
+    const existingClones = slide.querySelectorAll('[data-clone="true"]');
+    existingClones.forEach(clone => clone.remove());
 
-  // Duplica o conteúdo APENAS UMA VEZ
-  originals.forEach(node => {
-    const clone = node.cloneNode(true);
-    clone.setAttribute('data-clone', 'true');
-    clone.setAttribute('aria-hidden', 'true');
-    slide.appendChild(clone);
-  });
-
-  // Aguarda todas as imagens carregarem
-  const allImages = Array.from(slide.querySelectorAll('img'));
-  const loadPromises = allImages.map(img => {
-    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
-    return new Promise(resolve => {
-      const onFinish = () => {
-        img.removeEventListener('load', onFinish);
-        img.removeEventListener('error', onFinish);
-        resolve();
-      };
-      img.addEventListener('load', onFinish);
-      img.addEventListener('error', onFinish);
+    // Calcula a largura total do conteúdo original
+    let originalWidth = 0;
+    originals.forEach(item => {
+      originalWidth += item.offsetWidth + parseInt(getComputedStyle(item).marginLeft || 0) + parseInt(getComputedStyle(item).marginRight || 0);
     });
-  });
 
-  Promise.all(loadPromises).then(() => {
-    // Configuração final
-    slide.style.willChange = 'transform';
-    
-    // Garante que a animação está rodando
-    slide.style.animation = 'scroll 20s linear infinite';
-    
-    console.log('Carrossel iniciado com', originals.length, 'itens originais e', originals.length, 'clones');
-  });
+    // Função para duplicar conteúdo
+    function duplicateContent() {
+      originals.forEach(node => {
+        const clone = node.cloneNode(true);
+        clone.setAttribute('data-clone', 'true');
+        clone.setAttribute('aria-hidden', 'true');
+        slide.appendChild(clone);
+      });
+    }
 
-  // Previne duplicação múltipla no resize
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      // Apenas reinicia a animação, não duplica novamente
-      slide.style.animation = 'none';
-      setTimeout(() => {
-        slide.style.animation = 'scroll 20s linear infinite';
-      }, 10);
-    }, 250);
+    // Verifica se é iOS para aplicar correções específicas
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // Sistema de animação com reset
+    function startCarousel() {
+      duplicateContent();
+      
+      const allImages = Array.from(slide.querySelectorAll('img'));
+      const loadPromises = allImages.map(img => {
+        if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
+        return new Promise(resolve => {
+          const onFinish = () => {
+            img.removeEventListener('load', onFinish);
+            img.removeEventListener('error', onFinish);
+            resolve();
+          };
+          img.addEventListener('load', onFinish);
+          img.addEventListener('error', onFinish);
+        });
+      });
+
+      Promise.all(loadPromises).then(() => {
+        // Força hardware acceleration
+        slide.style.transform = 'translate3d(0,0,0)';
+        
+        // Configura a animação
+        const animationDuration = 20; // segundos
+        slide.style.animation = `scroll ${animationDuration}s linear infinite`;
+        slide.style.webkitAnimation = `scroll ${animationDuration}s linear infinite`;
+        
+        console.log('Carrossel iniciado - Largura original:', originalWidth);
+        
+        // Reset automático da animação para evitar paradas
+        let resetCount = 0;
+        const resetInterval = setInterval(() => {
+          resetCount++;
+          
+          // A cada 5 ciclos (100 segundos), força um reset suave
+          if (resetCount >= 5) {
+            resetCount = 0;
+            slide.style.animation = 'none';
+            slide.style.webkitAnimation = 'none';
+            
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                slide.style.animation = `scroll ${animationDuration}s linear infinite`;
+                slide.style.webkitAnimation = `scroll ${animationDuration}s linear infinite`;
+                console.log('Reset suave do carrossel aplicado');
+              }, 50);
+            });
+          }
+        }, animationDuration * 1000); // Verifica a cada ciclo completo
+      });
+    }
+
+    // Inicia o carrossel
+    if (isIOS) {
+      requestAnimationFrame(() => {
+        startCarousel();
+      });
+    } else {
+      startCarousel();
+    }
+
+    // Otimização para resize com debounce
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Pausa temporariamente
+        slide.style.animationPlayState = 'paused';
+        slide.style.webkitAnimationPlayState = 'paused';
+        
+        // Recálcula após resize
+        setTimeout(() => {
+          slide.style.animationPlayState = 'running';
+          slide.style.webkitAnimationPlayState = 'running';
+        }, 100);
+      }, 250);
+    });
+
+    // Pausa animação quando não visível (Performance)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          slide.style.animationPlayState = 'running';
+          slide.style.webkitAnimationPlayState = 'running';
+        } else {
+          slide.style.animationPlayState = 'paused';
+          slide.style.webkitAnimationPlayState = 'paused';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(slide);
+
+    // CSS dinâmico para a animação
+    if (!document.querySelector('#carousel-styles')) {
+      const style = document.createElement('style');
+      style.id = 'carousel-styles';
+      style.textContent = `
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(calc(-100% / 2));
+          }
+        }
+        
+        .logos-slide {
+          animation: scroll 20s linear infinite;
+          display: flex;
+          align-items: center;
+        }
+        
+        .logos-slide:hover {
+          animation-play-state: paused;
+        }
+      `;
+      document.head.appendChild(style);
+    }
   });
-});
+})();
