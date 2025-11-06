@@ -854,8 +854,8 @@ footer {
     }
     
     .logos-slide {
-        animation: scroll 7s linear infinite;
-        -webkit-animation: scroll 7s linear infinite;
+        animation: scroll 30s linear infinite;
+        -webkit-animation: scroll 30s linear infinite;
     }
     
     .logos-slide img {
@@ -876,8 +876,8 @@ footer {
     }
     
     .logos-slide {
-        animation: scroll 7s linear infinite;
-        -webkit-animation: scroll 7s linear infinite;
+        animation: scroll 30s linear infinite;
+        -webkit-animation: scroll 30s linear infinite;
     }
     
     .logos-slide img {
